@@ -1,5 +1,5 @@
-#ifndef LWIP_HDR_TEST_ETHARP_H
-#define LWIP_HDR_TEST_ETHARP_H
+#ifndef __TEST_ETHARP_H__
+#define __TEST_ETHARP_H__
 
 #include "../lwip_check.h"
 

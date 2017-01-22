@@ -1,5 +1,5 @@
-#ifndef LWIP_HDR_TCP_HELPER_H
-#define LWIP_HDR_TCP_HELPER_H
+#ifndef __TCP_HELPER_H__
+#define __TCP_HELPER_H__
 
 #include "../lwip_check.h"
 #include "lwip/arch.h"
