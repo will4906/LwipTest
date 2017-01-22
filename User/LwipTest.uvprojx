@@ -365,7 +365,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_CL,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\User;..\StCore;..\Stm32F10x_ETHLib\inc;..\Stm32F10x_FwLib\inc;.\system;.\drivers;.\drivers\led;.\drivers\delay;.\drivers\usart;.\drivers\eth;.\drivers\timer;.\drivers\lwip\src\include;.\drivers\lwip\src\include\ipv4;.\drivers\lwip\src\include\netif</IncludePath>
+              <IncludePath>..\User;..\StCore;..\Stm32F10x_ETHLib\inc;..\Stm32F10x_FwLib\inc;.\system;.\drivers;.\drivers\led;.\drivers\delay;.\drivers\usart;.\drivers\eth;.\drivers\timer;.\drivers\lwip\src\include;.\drivers\lwip\src\include\ipv4;.\drivers\lwip\src\include\netif;.\drivers\lwip\src\include\lwip;.\drivers\lwip\src\include\lwip\arch</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -802,6 +802,13 @@
         </Group>
         <Group>
           <GroupName>LwipArch</GroupName>
+          <Files>
+            <File>
+              <FileName>sys_arch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\drivers\lwip\src\arch\sys_arch.c</FilePath>
+            </File>
+          </Files>
         </Group>
       </Groups>
     </Target>
