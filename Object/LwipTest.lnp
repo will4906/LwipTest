@@ -35,6 +35,7 @@
 "..\object\dp83848.o"
 "..\object\totaltimer.o"
 "..\object\timer3.o"
+"..\object\tcpclient.o"
 "..\object\etharp.o"
 "..\object\ethernetif.o"
 "..\object\api_lib.o"

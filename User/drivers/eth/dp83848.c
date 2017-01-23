@@ -1,11 +1,14 @@
 #include <string.h>
 #include "dp83848.h"
 #include "Uart.h"
-#include "lwip/mem.h"
-#include "lwip/netif.h"
-#include "lwip/memp.h"
-#include "lwip/init.h"
+#include "mem.h"
+#include "netif.h"
+#include "memp.h"
+#include "init.h"
 #include "etharp.h"
+#include "tcp_impl.h"
+#include "tcpclient.h"
+#include "led.h"
 
 /********************************************************************************************************
 *																								宏定义
@@ -16,6 +19,11 @@
 *																								变量定义
 **********************************************************************************************************/
 static u32 LwipTime = 0;                 //LWip周期时钟
+static u32 ArpTimeIndex = 0;						 //ARP查询计时器
+static u32 TcpTimeIndex = 0;						 //Tcp查询计时器
+static u32 ClientTimeIndex = 0;					 //客户端发送计时器
+
+struct netif  DP83848_netif;    //定义一个全局的网络接口，注册网卡函数要用到
 
 u32 getLwipTime(void)
 {
@@ -99,8 +107,46 @@ void setGateway(unsigned char* gw)
 		gateway[i] = gw[i];
 	}
 }
+/************本地端口***********/
+static u16 tcpLocalPort = 5050;
 
-struct netif  DP83848_netif;    //定义一个全局的网络接口，注册网卡函数要用到
+u16 getTcpLocalPort(void)
+{
+	return tcpLocalPort;
+}
+void setTcpLocalPort(u16 tlp)
+{
+	tcpLocalPort = tlp;
+}
+
+/************服务器ip地址********/
+static u8 serverIpAddr[IP_LEN] = {192,168,0,60};
+
+u8* getServerIpAddr(void)
+{
+	return serverIpAddr;
+}
+void setServerIpAddr(u8 *sia)
+{
+	int i;
+	for (i = 0; i < IP_LEN; i++)
+	{
+		serverIpAddr[i] = sia[i];
+	}
+}
+
+/*********服务器端口号**********/
+static u16 serverPort = 8080; 		//范围：0-9999
+
+u16 getServerPort(void)
+{
+	return serverPort;
+}
+void setServerPort(u16 sp)
+{
+	serverPort = sp;
+}
+
 /*********************************************************************************************************
 *                                              静态函数定义
 *********************************************************************************************************/
@@ -195,28 +241,34 @@ void LwIP_Pkt_Handle(void)
 /*参  数：无                                       */
 /*返回值：无                                       */
 /*-------------------------------------------------*/
-void lwip_periodic_handle()
+void HandleLwipPeriodicEvent(void)
 {
+	u8 tcp_data[100] = "我是客户端\n";
 	//每500ms客户端发送一次数据
-	/*if ((LWipTime - CLIENTTimer >= 500))
+	if ((LwipTime - ClientTimeIndex >= 3000))
 	{
-		CLIENTTimer =  LWipTime;
-		TCP_Client_Send_Data(tcp_data,sizeof(tcp_data));//该函数为主动向服务器发送函数，
+		ClientTimeIndex =  LwipTime;
+		SendTcpDataAsClient(tcp_data,sizeof(tcp_data));//该函数为主动向服务器发送函数
+		EnableSingleLed(0);
 	}
 	
-#if LWIP_TCP   
-	if (LWipTime - TCPTimer >= 250)                 //每250ms调用一次tcp_tmr()函数	
+	if ((LwipTime - ClientTimeIndex >= 500))
 	{
-	TCPTimer =  LWipTime;
-	tcp_tmr();
+		DisableSingleLed(0);
+	}
+#if LWIP_TCP   
+	if (LwipTime - TcpTimeIndex >= 250)                 //每250ms调用一次tcp_tmr()函数	
+	{
+		TcpTimeIndex =  LwipTime;
+		tcp_tmr();
 	}
 #endif
 
-	if ((LWipTime - ARPTimer) >= ARP_TMR_INTERVAL)   //ARP每5s周期性调用一次
+	if ((LwipTime - ArpTimeIndex) >= ARP_TMR_INTERVAL)   //ARP每5s周期性调用一次
 	{
-	ARPTimer =  LWipTime;
-	etharp_tmr();
-	}*/
+		ArpTimeIndex =  LwipTime;
+		etharp_tmr();
+	}
 }
 
 /*-------------------------------------------------*/

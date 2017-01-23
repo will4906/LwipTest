@@ -1,7 +1,14 @@
 #include "led.h"
-#include "stm32f10x.h"
+/**********************************************************************
+*														变量定义
+**********************************************************************/
 
-void LED_Init(void)
+/*********************************************************************
+*	函数名：初始化LED配置
+* 参数：	无
+* 返回值：无
+**********************************************************************/
+void InitLedCon(void)
 {    	 
 	GPIO_InitTypeDef GPIO_InitStructure;                                   //定义一个IO端口参数结构体
 	RCC_APB2PeriphClockCmd( RCC_APB2Periph_GPIOD , ENABLE);  			   //使能PD端口时钟
@@ -33,3 +40,48 @@ void DisableAllLed(void)
 	GPIO_SetBits(GPIOD, GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14);
 }
 
+/******************************************************
+*函数名：点亮某个LED
+*参数：	 哪一个
+*返回值：无
+********************************************************/
+void EnableSingleLed(u8 which)
+{
+	switch(which)
+	{
+		case 0:
+			GPIO_ResetBits(GPIOD, GPIO_Pin_12);
+			break;
+		case 1:
+			GPIO_ResetBits(GPIOD, GPIO_Pin_13);
+			break;
+		case 2:
+			GPIO_ResetBits(GPIOD, GPIO_Pin_14);
+			break;
+		default:
+			break;
+	}
+}
+
+/******************************************************
+*函数名：熄灭某个LED
+*参数：	 哪一个
+*返回值：无
+********************************************************/
+void DisableSingleLed(u8 which)
+{
+	switch(which)
+	{
+		case 0:
+			GPIO_SetBits(GPIOD, GPIO_Pin_12);
+			break;
+		case 1:
+			GPIO_SetBits(GPIOD, GPIO_Pin_13);
+			break;
+		case 2:
+			GPIO_SetBits(GPIOD, GPIO_Pin_14);
+			break;
+		default:
+			break;
+	}
+}

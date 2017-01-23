@@ -9,6 +9,7 @@
 
 void InitEthernet(void);
 void InitLwipCon(void);
+void HandleLwipPeriodicEvent(void);
 
 u32 getLwipTime(void);
 void setLwipTime(u32 lt);
@@ -27,5 +28,14 @@ void setSubnetMask(unsigned char* sm);
 
 unsigned char* getGateway(void);
 void setGateway(unsigned char* gw);
+
+u16 getServerPort(void);
+void setServerPort(u16 sp);
+
+u16 getTcpLocalPort(void);
+void setTcpLocalPort(u16 tlp);
+
+u8* getServerIpAddr(void);
+void setServerIpAddr(u8 *sia);
 #endif
 

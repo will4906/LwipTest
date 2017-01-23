@@ -365,7 +365,7 @@
               <MiscControls></MiscControls>
               <Define>STM32F10X_CL,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\User;..\StCore;..\Stm32F10x_ETHLib\inc;..\Stm32F10x_FwLib\inc;.\system;.\drivers;.\drivers\led;.\drivers\delay;.\drivers\usart;.\drivers\eth;.\drivers\timer;.\drivers\lwip\src\include;.\drivers\lwip\src\include\ipv4;.\drivers\lwip\src\include\netif;.\drivers\lwip\src\include\lwip;.\drivers\lwip\src\include\lwip\arch</IncludePath>
+              <IncludePath>..\User;..\StCore;..\Stm32F10x_ETHLib\inc;..\Stm32F10x_FwLib\inc;.\system;.\drivers;.\drivers\led;.\drivers\delay;.\drivers\usart;.\drivers\eth;.\drivers\timer;.\drivers\tcp;.\drivers\lwip\src\include;.\drivers\lwip\src\include\ipv4;.\drivers\lwip\src\include\netif;.\drivers\lwip\src\include\lwip;.\drivers\lwip\src\include\lwip\arch</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -612,6 +612,11 @@
               <FileName>Timer3.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\drivers\timer\Timer3.c</FilePath>
+            </File>
+            <File>
+              <FileName>tcpclient.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\drivers\tcp\tcpclient.c</FilePath>
             </File>
           </Files>
         </Group>

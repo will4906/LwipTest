@@ -5,6 +5,7 @@
 #include "led.h"
 #include "Uart.h"
 #include "dp83848.h"
+#include "tcpclient.h"
 
 int main()
 {
@@ -14,18 +15,18 @@ int main()
 	//定时器时间设置为10ms
 	InitTimerCon();
 	InitUartCon();
-	LED_Init();
+	InitLedCon();
 	InitEthernet();
 	InitLwipCon();
+	InitTcpClient(getTcpLocalPort(), getServerIpAddr(), getServerPort());
 	while(1)
 	{
-		EnableAllLed();
-		delay_ms(1000);
+		//EnableAllLed();
 		if(ReadUartData(UART_PORT_COM2,data))
 		{
 			SendUartData(UART_PORT_COM2,data,5);
 		}
-		DisableAllLed();
-		delay_ms(500);
+		//DisableAllLed();
+		HandleLwipPeriodicEvent();
 	}
 }
