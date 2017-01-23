@@ -4,11 +4,11 @@
 #include "lwip/mem.h"
 #include "lwip/mem.h"
 #include "arch/sys_arch.h"
+#include "dp83848.h"
 
-extern u32_t LwipTime;
 u32_t sys_now(void)
 {
-	return LwipTime;
+	return getLwipTime();
 }
 
 

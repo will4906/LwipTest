@@ -1,10 +1,106 @@
+#include <string.h>
 #include "dp83848.h"
+#include "Uart.h"
+#include "lwip/mem.h"
+#include "lwip/netif.h"
+#include "lwip/memp.h"
+#include "lwip/init.h"
+#include "etharp.h"
 
+/********************************************************************************************************
+*																								宏定义
+**********************************************************************************************************/
+#define MAC_LEN 6
+#define IP_LEN  4
 /*********************************************************************************************************
 *																								变量定义
 **********************************************************************************************************/
-u32 LwipTime = 0;                 //LWip周期时钟
+static u32 LwipTime = 0;                 //LWip周期时钟
 
+u32 getLwipTime(void)
+{
+	return LwipTime;
+}
+void setLwipTime(u32 lt)
+{
+	LwipTime = lt;
+}
+
+static u8 MacAddr[MAC_LEN]={0,0,0,0,0,1};  //MAC地址，具有唯一性
+
+u8* getMacAddr(void)
+{
+	return MacAddr;
+}
+
+void setMacAddr(u8 ma[])
+{
+	int i;
+	for(i = 0; i < MAC_LEN; i ++)
+	{
+		MacAddr[i] = ma[i];
+	}
+}
+
+static char hostName[100] = "LwipTestBoard";
+
+char* getHostName(void)
+{
+	return hostName;
+}
+
+void setHostName(char *hn)
+{
+	strcpy(hostName, hn);
+}
+
+/*---------静态的IP地址---------*/
+static unsigned char ipAddr[IP_LEN] = {192, 168, 0, 30};
+
+unsigned char* getIpAddr(void)
+{
+	return ipAddr;
+}
+void setIpAddr(unsigned char *ia)
+{
+	int i;
+	for(i = 0; i < IP_LEN; i++)
+	{
+		ipAddr[i] = ia[i];
+	}
+}
+/*----------子网掩码------------*/
+static unsigned char subnetMask[IP_LEN] = {255, 255, 255, 0};
+
+unsigned char* getSubnetMask(void)
+{
+	return subnetMask;
+}
+void setSubnetMask(unsigned char* sm)
+{
+	int i;
+	for (i = 0; i < IP_LEN; i++)
+	{
+		subnetMask[i] = sm[i];
+	}
+}
+/*------------网关-------------*/
+static unsigned char gateway[IP_LEN] = {192, 168, 0, 1};
+
+unsigned char* getGateway(void)
+{
+	return gateway;
+}
+void setGateway(unsigned char* gw)
+{
+	int i;
+	for (i = 0; i < IP_LEN; i++)
+	{
+		gateway[i] = gw[i];
+	}
+}
+
+struct netif  DP83848_netif;    //定义一个全局的网络接口，注册网卡函数要用到
 /*********************************************************************************************************
 *                                              静态函数定义
 *********************************************************************************************************/
@@ -12,6 +108,8 @@ static void GPIO_Configuration(void);
 static void NVIC_Configuration(void);
 static void Ethernet_Configuration(void);
 
+err_t ethernetif_init(struct netif *netif); //其他文件内函数声明
+err_t ethernetif_input(struct netif *netif);//其他文件内函数声明
 /*********************************************************************************************************
 *函数名：初始化以太网
 *参数：  无
@@ -22,6 +120,103 @@ void InitEthernet(void)
 	GPIO_Configuration();
 	NVIC_Configuration();
 	Ethernet_Configuration();
+}
+
+/*-------------------------------------------------*/
+/*函数名：初始化lwip启动前的事宜                   */
+/*参  数：无                                       */
+/*返回值：无                                       */
+/*-------------------------------------------------*/
+void InitLwipCon(void)
+{
+	char first[100],second[100],third[100];
+	u8 firstLine[100],secondLine[100],thirdLine[100];
+	u8 index = 0;
+	struct ip_addr ipaddr;     //定义IP地址结构体
+	struct ip_addr netmask;    //定义子网掩码结构体
+	struct ip_addr gw;         //定义网关结构体
+
+	mem_init();                //初始化动态内存堆
+	memp_init();               //初始化内存池
+	lwip_init();               //初始化LWIP内核
+	
+	IP4_ADDR(&ipaddr, ipAddr[0], ipAddr[1], ipAddr[2], ipAddr[3]);            //设置IP地址
+	IP4_ADDR(&netmask, subnetMask[0], subnetMask[1], subnetMask[2], subnetMask[3]);   //设置子网掩码
+	IP4_ADDR(&gw, gateway[0], gateway[1], gateway[2], gateway[3]);                //设置网关
+
+	sprintf(first,"开发板静态IP地址：  %d.%d.%d.%d\r\n",ipAddr[0], ipAddr[1], ipAddr[2], ipAddr[3]);
+	while(first[index] != '\0')
+	{
+		firstLine[index] = first[index];
+		index ++;
+	}
+	sprintf(second, "开发板子网掩码地址：%d.%d.%d.%d\r\n", subnetMask[0], subnetMask[1], subnetMask[2], subnetMask[3]);
+	index = 0;
+	while(second[index] != '\0')
+	{
+		secondLine[index] = second[index];
+		index ++;
+	}
+	sprintf(third, "开发板网关地址：    %d.%d.%d.%d\r\n", gateway[0], gateway[1], gateway[2], gateway[3]);
+	index = 0;
+	while(third[index] != '\0')
+	{
+		thirdLine[index] = third[index];
+		index ++;
+	}
+	SendUartData(UART_PORT_COM2,firstLine,strlen(first));
+	SendUartData(UART_PORT_COM2,secondLine,strlen(second));
+	SendUartData(UART_PORT_COM2,thirdLine,strlen(third));
+	
+	ETH_MACAddressConfig(ETH_MAC_Address0, MacAddr);  //配置MAC地址
+
+	//注册网卡函数   ethernetif_init函数，需要自己实现，用于配置netif相关字段，以及初始化底层硬件。
+	netif_add(&DP83848_netif, &ipaddr, &netmask, &gw, NULL, &ethernetif_init, &ethernet_input);
+
+	//将注册网卡函数注册的网卡设置为默认网卡
+	netif_set_default(&DP83848_netif);
+
+	//打开网卡
+	netif_set_up(&DP83848_netif);
+}
+
+/*-------------------------------------------------*/
+/*函数名：网卡接收数据函数                         */
+/*参  数：无                                       */
+/*返回值：无                                       */
+/*-------------------------------------------------*/
+void LwIP_Pkt_Handle(void)
+{ 
+	ethernetif_input(&DP83848_netif);   //从网络缓冲区中读取接收到的数据包并将其发送给LWIP处理 
+}
+
+/*-------------------------------------------------*/
+/*函数名：LWIP周期性任务函数                       */
+/*参  数：无                                       */
+/*返回值：无                                       */
+/*-------------------------------------------------*/
+void lwip_periodic_handle()
+{
+	//每500ms客户端发送一次数据
+	/*if ((LWipTime - CLIENTTimer >= 500))
+	{
+		CLIENTTimer =  LWipTime;
+		TCP_Client_Send_Data(tcp_data,sizeof(tcp_data));//该函数为主动向服务器发送函数，
+	}
+	
+#if LWIP_TCP   
+	if (LWipTime - TCPTimer >= 250)                 //每250ms调用一次tcp_tmr()函数	
+	{
+	TCPTimer =  LWipTime;
+	tcp_tmr();
+	}
+#endif
+
+	if ((LWipTime - ARPTimer) >= ARP_TMR_INTERVAL)   //ARP每5s周期性调用一次
+	{
+	ARPTimer =  LWipTime;
+	etharp_tmr();
+	}*/
 }
 
 /*-------------------------------------------------*/
@@ -173,3 +368,22 @@ static void Ethernet_Configuration(void)
 
 	ETH_DMAITConfig(ETH_DMA_IT_NIS|ETH_DMA_IT_R,ENABLE);  	//使能以太网接收中断	
 }
+
+void ETH_IRQHandler(void)
+{
+  //检测是否收到数据包
+  while(ETH_GetRxPktSize() != 0) 
+  {		
+    LwIP_Pkt_Handle();//接收数据函数
+  }
+
+  ETH_DMAClearITPendingBit(ETH_DMA_IT_R);     //清除DMA中断标志位
+  ETH_DMAClearITPendingBit(ETH_DMA_IT_NIS);   //清除DMA接收中断标志位
+}
+
+
+
+
+
+
+

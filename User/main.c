@@ -16,7 +16,7 @@ int main()
 	InitUartCon();
 	LED_Init();
 	InitEthernet();
-	
+	InitLwipCon();
 	while(1)
 	{
 		EnableAllLed();

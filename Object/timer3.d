@@ -31,3 +31,5 @@
 ..\object\timer3.o: ..\Stm32F10x_FwLib\inc\misc.h
 ..\object\timer3.o: .\drivers\usart\Uart.h
 ..\object\timer3.o: .\drivers\usart\datatype.h
+..\object\timer3.o: .\drivers\eth\dp83848.h
+..\object\timer3.o: ..\Stm32F10x_ETHLib\inc\stm32_eth.h
