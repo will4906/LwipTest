@@ -22,10 +22,10 @@ int main()
 	while(1)
 	{
 		//EnableAllLed();
-		if(ReadUartData(UART_PORT_COM2,data))
+		/*if(ReadUartData(UART_PORT_COM2,data))
 		{
 			SendUartData(UART_PORT_COM2,data,5);
-		}
+		}*/
 		//DisableAllLed();
 		HandleLwipPeriodicEvent();
 	}

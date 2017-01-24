@@ -169,7 +169,7 @@ low_level_input(struct netif *netif)
   u16_t len;
   int l = 0;
   FrameTypeDef frame;
-  u8 *buffer;
+  u8 *buffer; 
 
   p = NULL;
   frame = ETH_RxPkt_ChainMode();

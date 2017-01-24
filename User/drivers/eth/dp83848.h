@@ -37,5 +37,19 @@ void setTcpLocalPort(u16 tlp);
 
 u8* getServerIpAddr(void);
 void setServerIpAddr(u8 *sia);
+
+u32 getArpTimeIndex(void);
+void setArpTimeIndex(u32 ati);
+void addArpTimeIndex(u32 addIndex);
+
+u32 getTcpTimeIndex(void);
+void setTcpTimeIndex(u32 tti);
+void addTcpTimeIndex(u32 addIndex);
+
+u8 getArpPeriodFlag(void);
+void setArpPeriodFlag(u8 apf);
+
+u8 getTcpPeriodFlag(void);
+void setTcpPeriodFlag(u8 tpf);
 #endif
 

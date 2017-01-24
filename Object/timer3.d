@@ -33,3 +33,17 @@
 ..\object\timer3.o: .\drivers\usart\datatype.h
 ..\object\timer3.o: .\drivers\eth\dp83848.h
 ..\object\timer3.o: ..\Stm32F10x_ETHLib\inc\stm32_eth.h
+..\object\timer3.o: .\drivers\lwip\src\include\netif\etharp.h
+..\object\timer3.o: .\drivers\lwip\src\include\lwip/opt.h
+..\object\timer3.o: .\drivers\lwip\src\include\lwipopts.h
+..\object\timer3.o: .\drivers\lwip\src\include\lwip/debug.h
+..\object\timer3.o: .\drivers\lwip\src\include\lwip/arch.h
+..\object\timer3.o: .\drivers\lwip\src\include\lwip/arch/cc.h
+..\object\timer3.o: C:\Software\Keil_v5\MDK\ARM\ARMCC\Bin\..\include\stdio.h
+..\object\timer3.o: .\drivers\lwip\src\include\lwip/opt.h
+..\object\timer3.o: .\drivers\lwip\src\include\lwip/pbuf.h
+..\object\timer3.o: .\drivers\lwip\src\include\lwip/err.h
+..\object\timer3.o: .\drivers\lwip\src\include\ipv4\lwip/ip_addr.h
+..\object\timer3.o: .\drivers\lwip\src\include\lwip/def.h
+..\object\timer3.o: .\drivers\lwip\src\include\lwip/netif.h
+..\object\timer3.o: .\drivers\lwip\src\include\ipv4\lwip/ip.h

@@ -15,6 +15,7 @@
 #include "Timer3.h"
 #include "Uart.h"
 #include "dp83848.h"
+#include "etharp.h"
 
 /*********************************************************************************************************
 *                                              静态函数定义
@@ -57,10 +58,24 @@ void TIM3_IRQHandler( void )
 	{
 		//Lwip轮询
 		u32 LwipTime = getLwipTime();
-		LwipTime += 1;
+		LwipTime += 10;
 		setLwipTime(LwipTime);
-		//LED标志位
-		
+		//TCP轮询
+		#if LWIP_TCP
+			addTcpTimeIndex(10);
+			if (getTcpTimeIndex() >= 250)
+			{
+				setTcpTimeIndex(0);
+				setTcpPeriodFlag(1);
+			}
+		#endif
+		//Arp轮询
+		addArpTimeIndex(10);
+		if(getArpTimeIndex() >= ARP_TMR_INTERVAL)
+		{
+			setArpTimeIndex(0);
+			setArpPeriodFlag(1);
+		}
 		
 		TIM_ClearITPendingBit(TIM3, TIM_IT_Update );
 	}
@@ -83,7 +98,7 @@ static void InitTimer3Mode( void )
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
 	
 	TIM_TimeBaseStructure.TIM_Period = 99;
-	TIM_TimeBaseStructure.TIM_Prescaler = 719;
+	TIM_TimeBaseStructure.TIM_Prescaler = 7199;
 	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1;
 	TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
 	

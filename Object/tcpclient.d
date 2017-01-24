@@ -49,3 +49,8 @@
 ..\object\tcpclient.o: .\drivers\lwip\src\include\ipv4\lwip/icmp.h
 ..\object\tcpclient.o: .\drivers\eth\dp83848.h
 ..\object\tcpclient.o: .\drivers\led\led.h
+..\object\tcpclient.o: .\drivers\usart\uart.h
+..\object\tcpclient.o: .\drivers\usart\datatype.h
+..\object\tcpclient.o: C:\Software\Keil_v5\MDK\ARM\ARMCC\Bin\..\include\string.h
+..\object\tcpclient.o: C:\Software\Keil_v5\MDK\ARM\ARMCC\Bin\..\include\stdlib.h
+..\object\tcpclient.o: ..\User\commontool.h

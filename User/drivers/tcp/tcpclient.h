@@ -10,10 +10,10 @@
 void InitTcpClient(u16 local_port, u8 *server_ip, u16 server_port);
 err_t TcpConnected(void *arg,struct tcp_pcb *pcb,err_t err);
 void CloseTcp(struct tcp_pcb *pcb);
-err_t TcpConnected(void *arg,struct tcp_pcb *pcb,err_t err);
+err_t OnTcpConnected(void *arg,struct tcp_pcb *pcb,err_t err);
 err_t SendTcpDataAsClient(u8 *buff, u16 length);
 err_t  ReceiveTcpDataAsClient(void *arg, struct tcp_pcb *pcb,struct pbuf *p,err_t err);
-
+void OnTcpClientReceiveData(void *recvData);
 
 
 

@@ -19,9 +19,6 @@
 *																								变量定义
 **********************************************************************************************************/
 static u32 LwipTime = 0;                 //LWip周期时钟
-static u32 ArpTimeIndex = 0;						 //ARP查询计时器
-static u32 TcpTimeIndex = 0;						 //Tcp查询计时器
-static u32 ClientTimeIndex = 0;					 //客户端发送计时器
 
 struct netif  DP83848_netif;    //定义一个全局的网络接口，注册网卡函数要用到
 
@@ -147,6 +144,56 @@ void setServerPort(u16 sp)
 	serverPort = sp;
 }
 
+static u32 ArpTimeIndex = 0;						 //ARP查询计时器
+
+u32 getArpTimeIndex(void)
+{
+	return ArpTimeIndex;
+}
+void setArpTimeIndex(u32 ati)
+{
+	ArpTimeIndex = ati;
+}
+void addArpTimeIndex(u32 addIndex)
+{
+	ArpTimeIndex += addIndex;
+}
+
+static u32 TcpTimeIndex = 0;						 //Tcp查询计时器
+
+u32 getTcpTimeIndex(void)
+{
+	return TcpTimeIndex;
+}
+void setTcpTimeIndex(u32 tti)
+{
+	TcpTimeIndex = tti;
+}
+void addTcpTimeIndex(u32 addIndex)
+{
+	TcpTimeIndex += addIndex;
+}
+static u8 ArpPeriodFlag = 0;							//ARP周期标志位
+
+u8 getArpPeriodFlag(void)
+{
+	return ArpPeriodFlag;
+}
+void setArpPeriodFlag(u8 apf)
+{
+	ArpPeriodFlag = apf;
+}
+
+static u8 TcpPeriodFlag = 0;							//TCP周期标志位
+
+u8 getTcpPeriodFlag(void)
+{
+	return TcpPeriodFlag;
+}
+void setTcpPeriodFlag(u8 tpf)
+{
+	TcpPeriodFlag = tpf;
+}
 /*********************************************************************************************************
 *                                              静态函数定义
 *********************************************************************************************************/
@@ -227,15 +274,15 @@ void InitLwipCon(void)
 }
 
 /*-------------------------------------------------*/
-/*函数名：网卡接收数据函数                         */
-/*参  数：无                                       */
-/*返回值：无                                       */
+/*函数名：网卡接收数据函数                           */
+/*参  数：无                                        */
+/*返回值：无                                        */
 /*-------------------------------------------------*/
 void LwIP_Pkt_Handle(void)
 { 
 	ethernetif_input(&DP83848_netif);   //从网络缓冲区中读取接收到的数据包并将其发送给LWIP处理 
 }
-
+ 
 /*-------------------------------------------------*/
 /*函数名：LWIP周期性任务函数                       */
 /*参  数：无                                       */
@@ -243,30 +290,14 @@ void LwIP_Pkt_Handle(void)
 /*-------------------------------------------------*/
 void HandleLwipPeriodicEvent(void)
 {
-	u8 tcp_data[100] = "我是客户端\n";
-	//每500ms客户端发送一次数据
-	if ((LwipTime - ClientTimeIndex >= 3000))
+	if (getTcpPeriodFlag() == 1)
 	{
-		ClientTimeIndex =  LwipTime;
-		SendTcpDataAsClient(tcp_data,sizeof(tcp_data));//该函数为主动向服务器发送函数
-		EnableSingleLed(0);
-	}
-	
-	if ((LwipTime - ClientTimeIndex >= 500))
-	{
-		DisableSingleLed(0);
-	}
-#if LWIP_TCP   
-	if (LwipTime - TcpTimeIndex >= 250)                 //每250ms调用一次tcp_tmr()函数	
-	{
-		TcpTimeIndex =  LwipTime;
+		setTcpPeriodFlag(0);
 		tcp_tmr();
 	}
-#endif
-
-	if ((LwipTime - ArpTimeIndex) >= ARP_TMR_INTERVAL)   //ARP每5s周期性调用一次
+	if (getArpPeriodFlag() == 1)
 	{
-		ArpTimeIndex =  LwipTime;
+		setArpPeriodFlag(0);
 		etharp_tmr();
 	}
 }

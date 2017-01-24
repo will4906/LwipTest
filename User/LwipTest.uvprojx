@@ -10,6 +10,7 @@
       <TargetName>LwipTest</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
+      <pArmCC>5050106::V5.05 update 1 (build 106)::ARMCC</pArmCC>
       <TargetOption>
         <TargetCommonOption>
           <Device>STM32F107VC</Device>
@@ -572,6 +573,11 @@
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\main.c</FilePath>
+            </File>
+            <File>
+              <FileName>commontool.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\commontool.c</FilePath>
             </File>
           </Files>
         </Group>
