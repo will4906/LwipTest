@@ -9,6 +9,7 @@
 #include "tcp_impl.h"
 #include "tcpclient.h"
 #include "led.h"
+#include "UartCom2.h"
 
 /********************************************************************************************************
 *																								宏定义
@@ -173,6 +174,21 @@ void addTcpTimeIndex(u32 addIndex)
 {
 	TcpTimeIndex += addIndex;
 }
+
+static u32 CheckConnTimeIndex = 0;						//连接检查计时
+
+u32 getCheckConnTimeIndex(void)
+{
+	return CheckConnTimeIndex;
+}
+void setCheckConnTimeIndex(u32 cctt)
+{
+	CheckConnTimeIndex = cctt;
+}
+void addCheckConnTimeIndex(u32 addIndex)
+{
+	CheckConnTimeIndex += addIndex;
+}
 static u8 ArpPeriodFlag = 0;							//ARP周期标志位
 
 u8 getArpPeriodFlag(void)
@@ -194,6 +210,18 @@ void setTcpPeriodFlag(u8 tpf)
 {
 	TcpPeriodFlag = tpf;
 }
+
+static u8 CheckConnFlag = 0;							//连接检查周期标志位
+
+u8 getCheckConnFlag(void)
+{
+	return CheckConnFlag;
+}
+void setCheckConnFlag(u8 ccf)
+{
+	CheckConnFlag = ccf;
+}
+
 /*********************************************************************************************************
 *                                              静态函数定义
 *********************************************************************************************************/
@@ -222,9 +250,6 @@ void InitEthernet(void)
 /*-------------------------------------------------*/
 void InitLwipCon(void)
 {
-	char first[100],second[100],third[100];
-	u8 firstLine[100],secondLine[100],thirdLine[100];
-	u8 index = 0;
 	struct ip_addr ipaddr;     //定义IP地址结构体
 	struct ip_addr netmask;    //定义子网掩码结构体
 	struct ip_addr gw;         //定义网关结构体
@@ -237,29 +262,9 @@ void InitLwipCon(void)
 	IP4_ADDR(&netmask, subnetMask[0], subnetMask[1], subnetMask[2], subnetMask[3]);   //设置子网掩码
 	IP4_ADDR(&gw, gateway[0], gateway[1], gateway[2], gateway[3]);                //设置网关
 
-	sprintf(first,"开发板静态IP地址：  %d.%d.%d.%d\r\n",ipAddr[0], ipAddr[1], ipAddr[2], ipAddr[3]);
-	while(first[index] != '\0')
-	{
-		firstLine[index] = first[index];
-		index ++;
-	}
-	sprintf(second, "开发板子网掩码地址：%d.%d.%d.%d\r\n", subnetMask[0], subnetMask[1], subnetMask[2], subnetMask[3]);
-	index = 0;
-	while(second[index] != '\0')
-	{
-		secondLine[index] = second[index];
-		index ++;
-	}
-	sprintf(third, "开发板网关地址：    %d.%d.%d.%d\r\n", gateway[0], gateway[1], gateway[2], gateway[3]);
-	index = 0;
-	while(third[index] != '\0')
-	{
-		thirdLine[index] = third[index];
-		index ++;
-	}
-	SendUartData(UART_PORT_COM2,firstLine,strlen(first));
-	SendUartData(UART_PORT_COM2,secondLine,strlen(second));
-	SendUartData(UART_PORT_COM2,thirdLine,strlen(third));
+	printf2("开发板静态IP地址：  %d.%d.%d.%d\r\n",ipAddr[0], ipAddr[1], ipAddr[2], ipAddr[3]);
+	printf2("开发板子网掩码地址：%d.%d.%d.%d\r\n", subnetMask[0], subnetMask[1], subnetMask[2], subnetMask[3]);
+	printf2("开发板网关地址：    %d.%d.%d.%d\r\n", gateway[0], gateway[1], gateway[2], gateway[3]);
 	
 	ETH_MACAddressConfig(ETH_MAC_Address0, MacAddr);  //配置MAC地址
 
@@ -299,6 +304,11 @@ void HandleLwipPeriodicEvent(void)
 	{
 		setArpPeriodFlag(0);
 		etharp_tmr();
+	}
+	if(getCheckConnFlag() == 1)
+	{
+		setCheckConnFlag(0);
+		CheckForConnection();
 	}
 }
 

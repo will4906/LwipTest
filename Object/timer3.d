@@ -47,3 +47,8 @@
 ..\object\timer3.o: .\drivers\lwip\src\include\lwip/def.h
 ..\object\timer3.o: .\drivers\lwip\src\include\lwip/netif.h
 ..\object\timer3.o: .\drivers\lwip\src\include\ipv4\lwip/ip.h
+..\object\timer3.o: .\drivers\tcp\tcpclient.h
+..\object\timer3.o: .\drivers\lwip\src\include\lwip\tcp_impl.h
+..\object\timer3.o: .\drivers\lwip\src\include\lwip/tcp.h
+..\object\timer3.o: .\drivers\lwip\src\include\lwip/mem.h
+..\object\timer3.o: .\drivers\lwip\src\include\ipv4\lwip/icmp.h

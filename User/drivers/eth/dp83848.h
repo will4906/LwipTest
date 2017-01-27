@@ -46,10 +46,18 @@ u32 getTcpTimeIndex(void);
 void setTcpTimeIndex(u32 tti);
 void addTcpTimeIndex(u32 addIndex);
 
+u32 getCheckConnTimeIndex(void);
+void setCheckConnTimeIndex(u32 cctt);
+void addCheckConnTimeIndex(u32 addIndex);
+
 u8 getArpPeriodFlag(void);
 void setArpPeriodFlag(u8 apf);
 
 u8 getTcpPeriodFlag(void);
 void setTcpPeriodFlag(u8 tpf);
+
+u8 getCheckConnFlag(void);
+void setCheckConnFlag(u8 ccf);
+
 #endif
 

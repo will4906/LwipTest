@@ -56,3 +56,5 @@
 ..\object\dp83848.o: .\drivers\lwip\src\include\ipv4\lwip/icmp.h
 ..\object\dp83848.o: .\drivers\tcp\tcpclient.h
 ..\object\dp83848.o: .\drivers\led\led.h
+..\object\dp83848.o: .\drivers\usart\UartCom2.h
+..\object\dp83848.o: C:\Software\Keil_v5\MDK\ARM\ARMCC\Bin\..\include\stdarg.h

@@ -53,8 +53,7 @@ void CloseTcp(struct tcp_pcb *pcb)
 /*-------------------------------------------------*/
 err_t OnTcpConnected(void *arg,struct tcp_pcb *pcb,err_t err)
 {
-	//pcb = tcp_new();
-	ip_set_option(pcb, SOF_KEEPALIVE);
+	ip_set_option(pcb, SOF_KEEPALIVE);			//保活
 	tcp_recv(pcb,ReceiveTcpDataAsClient);  //设置tcp接收回调函数
 	return ERR_OK;                  //返回OK
 }
@@ -67,29 +66,15 @@ err_t OnTcpConnected(void *arg,struct tcp_pcb *pcb,err_t err)
 /*-------------------------------------------------*/
 err_t SendTcpDataAsClient(u8 *buff, u16 length)					
 {
-	struct tcp_pcb *cpcb;   //TCP控制块
  	err_t err;              //错误值
-	u16 tcpLocalPort = getTcpLocalPort();
 	
-	connectFlag = 0;       //连接状态  0：未连接
-	for(cpcb = tcp_active_pcbs; cpcb != NULL; cpcb = cpcb->next)                    //轮询TCP活动列表
-	{
-		if(cpcb->local_port == tcpLocalPort && cpcb->remote_port == getServerPort())  //如果TCP_LOCAL_PORT端口指定的连接没有断开
-		{
-			printf2("connectFlag = 1\n");
-			connectFlag = 1;  						//连接标志
-			break;							   	
-		}
-	}
-	if(connectFlag == 0)  							                   // TCP_LOCAL_PORT指定的端口未连接或已断开
-	{
-		printf2("connectFlag = 0\n");
-		CloseTcp(tcp_client_pcb);                                     //关闭连接
-		InitTcpClient(tcpLocalPort,getServerIpAddr(),getServerPort());         //重新连接
-	}
 	if(connectFlag == 1)                               //连接正常
 	{
 		err = tcp_write(tcp_client_pcb,buff,length,1);	//发送数据
+	}
+	else
+	{
+		return ERR_CONN;
 	}
 	return err;   			
 }
@@ -122,6 +107,33 @@ err_t  ReceiveTcpDataAsClient(void *arg, struct tcp_pcb *pcb,struct pbuf *p,err_
 }
 
 /******************************************************************
+*函数：  检查连接状态，若断开则重连
+*参数：  无
+*返回值：无
+*注：    此函数需以一定的时间调用，否则无法发挥作用
+*********************************************************************/
+void CheckForConnection(void)
+{
+	struct tcp_pcb *cpcb;   //TCP控制块
+	connectFlag = 0;
+	for(cpcb = tcp_active_pcbs; cpcb != NULL; cpcb = cpcb->next)                    //轮询TCP活动列表
+	{
+		if(cpcb->local_port == getTcpLocalPort() && cpcb->remote_port == getServerPort())  //如果TCP_LOCAL_PORT端口指定的连接没有断开
+		{
+			printf2("no need to reconnect\n");
+			connectFlag = 1;  						//连接标志
+			break;							   	
+		}
+	}
+	if (!connectFlag)
+	{
+		printf2("reconnecting\n");
+		CloseTcp(tcp_client_pcb);                                     //关闭连接
+		InitTcpClient(getTcpLocalPort(),getServerIpAddr(),getServerPort());         //重新连接
+	}
+}
+
+/******************************************************************
 *函数名：当TCP客户端接收到数据时的处理
 *参数：	 代表数据的void指针
 *返回值：无
@@ -133,4 +145,7 @@ void OnTcpClientReceiveData(void *recvData)
 	SendUartData(UART_PORT_COM2, recvData, strlen(recvData));
 	SendTcpDataAsClient((u8*)recvData, strlen(recvData));
 }
+
+
+
 

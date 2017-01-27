@@ -16,7 +16,7 @@
 #include "Uart.h"
 #include "dp83848.h"
 #include "etharp.h"
-
+#include "tcpclient.h"
 /*********************************************************************************************************
 *                                              静态函数定义
 *********************************************************************************************************/
@@ -76,7 +76,13 @@ void TIM3_IRQHandler( void )
 			setArpTimeIndex(0);
 			setArpPeriodFlag(1);
 		}
-		
+		//连接检查轮询
+		addCheckConnTimeIndex(10);
+		if (getCheckConnTimeIndex() >= CHECK_FOR_CONNECTION_PERIOD)
+		{
+			setCheckConnTimeIndex(0);
+			setCheckConnFlag(1);
+		}
 		TIM_ClearITPendingBit(TIM3, TIM_IT_Update );
 	}
 }

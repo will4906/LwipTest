@@ -2,10 +2,10 @@
 #define __LWIPOPTS_H__
 
 /*****************保活探测宏定义*********************/
-#define LWIP_TCP_KEEPALIVE           1
-#define TCP_KEEPIDLE_DEFAULT         6000
-#define TCP_KEEPINTVL_DEFAULT        1000
-#define TCP_KEEPCNT_DEFAULT          9
+#define LWIP_TCP_KEEPALIVE           1              //开启用户自定义保活机制，1（自定义），0（默认）
+#define TCP_KEEPIDLE_DEFAULT         6000           //连接双方都无数据，延时多少毫秒开启保活探测
+#define TCP_KEEPINTVL_DEFAULT        1000           //发送保活探测的间隔时间(ms)
+#define TCP_KEEPCNT_DEFAULT          9              //一共发送几次保活探测，无反应也认为断连
 
 #define SYS_LIGHTWEIGHT_PROT    0  //关保护
 
