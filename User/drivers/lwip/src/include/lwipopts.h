@@ -1,6 +1,12 @@
 #ifndef __LWIPOPTS_H__
 #define __LWIPOPTS_H__
 
+/*****************保活探测宏定义*********************/
+#define LWIP_TCP_KEEPALIVE           1
+#define TCP_KEEPIDLE_DEFAULT         6000
+#define TCP_KEEPINTVL_DEFAULT        1000
+#define TCP_KEEPCNT_DEFAULT          9
+
 #define SYS_LIGHTWEIGHT_PROT    0  //关保护
 
 #define NO_SYS                  1  //不使用UCOS操作系统

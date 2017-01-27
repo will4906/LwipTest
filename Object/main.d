@@ -54,3 +54,4 @@
 ..\object\main.o: .\drivers\lwip\src\include\ipv4\lwip/ip_addr.h
 ..\object\main.o: .\drivers\lwip\src\include\lwip/netif.h
 ..\object\main.o: .\drivers\lwip\src\include\ipv4\lwip/icmp.h
+..\object\main.o: C:\Software\Keil_v5\MDK\ARM\ARMCC\Bin\..\include\string.h

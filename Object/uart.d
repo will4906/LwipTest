@@ -31,3 +31,4 @@
 ..\object\uart.o: ..\Stm32F10x_FwLib\inc\stm32f10x_wwdg.h
 ..\object\uart.o: ..\Stm32F10x_FwLib\inc\misc.h
 ..\object\uart.o: drivers\usart\UartCom2.h
+..\object\uart.o: C:\Software\Keil_v5\MDK\ARM\ARMCC\Bin\..\include\stdarg.h

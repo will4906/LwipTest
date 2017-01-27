@@ -54,3 +54,5 @@
 ..\object\tcpclient.o: C:\Software\Keil_v5\MDK\ARM\ARMCC\Bin\..\include\string.h
 ..\object\tcpclient.o: C:\Software\Keil_v5\MDK\ARM\ARMCC\Bin\..\include\stdlib.h
 ..\object\tcpclient.o: ..\User\commontool.h
+..\object\tcpclient.o: .\drivers\usart\UartCom2.h
+..\object\tcpclient.o: C:\Software\Keil_v5\MDK\ARM\ARMCC\Bin\..\include\stdarg.h

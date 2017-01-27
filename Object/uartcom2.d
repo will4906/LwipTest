@@ -1,6 +1,7 @@
 ..\object\uartcom2.o: drivers\usart\UartCom2.c
 ..\object\uartcom2.o: drivers\usart\UartCom2.h
 ..\object\uartcom2.o: drivers\usart\datatype.h
+..\object\uartcom2.o: C:\Software\Keil_v5\MDK\ARM\ARMCC\Bin\..\include\stdarg.h
 ..\object\uartcom2.o: drivers\usart\Uart.h
 ..\object\uartcom2.o: .\system\stm32f10x.h
 ..\object\uartcom2.o: ..\StCore\core_cm3.h
@@ -32,3 +33,4 @@
 ..\object\uartcom2.o: ..\Stm32F10x_FwLib\inc\stm32f10x_wwdg.h
 ..\object\uartcom2.o: ..\Stm32F10x_FwLib\inc\misc.h
 ..\object\uartcom2.o: C:\Software\Keil_v5\MDK\ARM\ARMCC\Bin\..\include\stdio.h
+..\object\uartcom2.o: C:\Software\Keil_v5\MDK\ARM\ARMCC\Bin\..\include\string.h

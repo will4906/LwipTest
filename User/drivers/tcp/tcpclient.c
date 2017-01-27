@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "commontool.h"
+#include "UartCom2.h"
 
 u8 connectFlag = 0;                                    //连接状态  0：未连接   1：连接
 struct tcp_pcb *tcp_client_pcb;                         //TCP客户端控制块
@@ -52,6 +53,8 @@ void CloseTcp(struct tcp_pcb *pcb)
 /*-------------------------------------------------*/
 err_t OnTcpConnected(void *arg,struct tcp_pcb *pcb,err_t err)
 {
+	//pcb = tcp_new();
+	ip_set_option(pcb, SOF_KEEPALIVE);
 	tcp_recv(pcb,ReceiveTcpDataAsClient);  //设置tcp接收回调函数
 	return ERR_OK;                  //返回OK
 }
@@ -73,12 +76,14 @@ err_t SendTcpDataAsClient(u8 *buff, u16 length)
 	{
 		if(cpcb->local_port == tcpLocalPort && cpcb->remote_port == getServerPort())  //如果TCP_LOCAL_PORT端口指定的连接没有断开
 		{
+			printf2("connectFlag = 1\n");
 			connectFlag = 1;  						//连接标志
 			break;							   	
 		}
 	}
 	if(connectFlag == 0)  							                   // TCP_LOCAL_PORT指定的端口未连接或已断开
 	{
+		printf2("connectFlag = 0\n");
 		CloseTcp(tcp_client_pcb);                                     //关闭连接
 		InitTcpClient(tcpLocalPort,getServerIpAddr(),getServerPort());         //重新连接
 	}
