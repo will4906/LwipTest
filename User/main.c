@@ -13,7 +13,7 @@ u32 r_buff[512];
 
 int main()
 {
-	u8 data[50];
+	u8 data[500];
 	delay_init();
 	//定时器时间设置为10ms
 	InitTimerCon();

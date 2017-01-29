@@ -7,9 +7,9 @@
 #include "commontool.h"
 #include "UartCom2.h"
 
-u8 connectFlag = 0;                                    //连接状态  0：未连接   1：连接
+u8 connectFlag = 1;                                    //连接状态  0：未连接   1：连接
 struct tcp_pcb *tcp_client_pcb;                         //TCP客户端控制块
-
+u8 testLed = 0;
 /*-------------------------------------------------*/
 /*函数名：TCP客户端的初始化                        */
 /*参  数：local_port:客户端端口号                  */
@@ -74,7 +74,7 @@ err_t SendTcpDataAsClient(u8 *buff, u16 length)
 	}
 	else
 	{
-		return ERR_CONN;
+		return 0;
 	}
 	return err;   			
 }
@@ -89,13 +89,14 @@ err_t SendTcpDataAsClient(u8 *buff, u16 length)
 /*-------------------------------------------------*/
 err_t  ReceiveTcpDataAsClient(void *arg, struct tcp_pcb *pcb,struct pbuf *p,err_t err)
 {
-	u8 *recvData;
+	u8 *recvData = NULL;
 	if(p != NULL)                                   //数据缓存不为空指针
 	{
 		tcp_recved(pcb, p->tot_len);				//获取数据长度 tot_len
 		recvData = (u8*)calloc(p->tot_len + 1, sizeof(u8));
 		copyArr(recvData, p->payload, p->tot_len);
 		OnTcpClientReceiveData(recvData);
+		//SendTcpDataAsClient((u8*)"", 1);					//
 		pbuf_free(p); 			                    //释放指针
 		free(recvData);
 	}
@@ -120,14 +121,12 @@ void CheckForConnection(void)
 	{
 		if(cpcb->local_port == getTcpLocalPort() && cpcb->remote_port == getServerPort())  //如果TCP_LOCAL_PORT端口指定的连接没有断开
 		{
-			printf2("no need to reconnect\n");
 			connectFlag = 1;  						//连接标志
 			break;							   	
 		}
 	}
 	if (!connectFlag)
 	{
-		printf2("reconnecting\n");
 		CloseTcp(tcp_client_pcb);                                     //关闭连接
 		InitTcpClient(getTcpLocalPort(),getServerIpAddr(),getServerPort());         //重新连接
 	}
@@ -142,8 +141,18 @@ void OnTcpClientReceiveData(void *recvData)
 {
 	//在此处添加数据处理的相应代码
 	//Add codes that deal with the received data here
-	SendUartData(UART_PORT_COM2, recvData, strlen(recvData));
-	SendTcpDataAsClient((u8*)recvData, strlen(recvData));
+	//SendUartData(UART_PORT_COM2, recvData, strlen(recvData));
+	//SendTcpDataAsClient((u8*)recvData, strlen(recvData));
+	if(testLed)
+	{
+		EnableAllLed();
+		testLed = 0;
+	}
+	else
+	{
+		DisableAllLed();
+		testLed = 1;
+	}
 }
 
 

@@ -17,7 +17,7 @@
 
 #define MEM_ALIGNMENT           4  //使用4字节对齐模式
 
-#define MEM_SIZE                16000 //内存堆大小,如果在应用中有大量数据发送的话这个值最好设置大一点 
+#define MEM_SIZE                32000 //内存堆大小,如果在应用中有大量数据发送的话这个值最好设置大一点 
 
 #define MEMP_NUM_PBUF           10   //memp结构的pbuf数量,如果应用从ROM或者静态存储区发送大量数据时,这个值应该设置大一点
 
